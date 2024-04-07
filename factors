@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def factorize(n):
     # A simple approach to factorize the number into two factors
     for i in range(2, int(n**0.5) + 1):
