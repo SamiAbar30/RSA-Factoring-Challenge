@@ -1,53 +1,41 @@
-#!/usr/bin/python3
-"""
-Factorize as many numbers as possible into a product of two smaller numbers.
-    Usage: factors <file>
-        where <file> is a file containing natural numbers to factor.
-        One number per line
-        You can assume that all lines will be valid natural numbers\
-                greater than 1
-        You can assume that there will be no empy line, and no space\
-                before and after the valid number
-        The file will always end with a new line
-    Output format: n=p*q
-        one factorization per line
-        p and q don’t have to be prime numbers
-        See example
-    You can work on the numbers of the file in the order of your choice
-    Your program should run without any dependency: You will not be ablei\
-            to install anything on the machine we will run your program on
-    Time limit: Your program will be killed after 5 seconds\
-            if it hasn’t finish
-    Push all your scripts, source code, etc… to your repository
-"""
-# library to get arguments
-import sys
+#!/usr/bin/env python3
+import math
+import time
 
+def is_prime(num):
+    if num <= 1:
+        return False
+    if num <= 3:
+        return True
+    if num % 2 == 0 or num % 3 == 0:
+        return False
+    i = 5
+    while i * i <= num:
+        if num % i == 0 or num % (i + 2) == 0:
+            return False
+        i += 6
+    return True
 
-# fn unpack number factorial
-def fc():
-    """
-    function fc to search file to convert number and format n=p*q
-    """
-    try:
-        revfile = sys.argv[1]
-        with open(revfile) as f:
-            for revnumber in f:
-                revnumber = int(revnumber)
-                if revnumber % 2 == 0:
-                        print("{}={}*{}".format(revnumber, revnumber // 2, 2))
-                        continue
-                i = 3
-                while i < revnumber // 2:
-                    if revnumber % i == 0:
-                        print("{}={}*{}".format(revnumber, revnumber // i, i))
-                        break
-                    i = i + 2
-                if i == (revnumber // 2) + 1:
-                    print("{}={}*{}".format(revnumber, revnumber, 1))
-    except (IndexError):
-        pass
+def rsa_factorize(n):
+    start_time = time.time()
+    for i in range(2, int(math.sqrt(n)) + 1):
+        if time.time() - start_time > 4.95:  # Stop after 4.95 seconds to avoid being killed
+            break
+        if n % i == 0:
+            factor = n // i
+            if is_prime(i) and is_prime(factor):
+                return (i, factor)
+    return (n, 1)
 
+def main(file_path):
+    with open(file_path, 'r') as file:
+        number = int(file.read().strip())
+        p, q = rsa_factorize(number)
+        print(f"{number}={p}*{q}")
 
-# autostart
-fc()
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) != 2:
+        print("Usage: rsa <file>")
+    else:
+        main(sys.argv[1])
